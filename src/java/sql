@@ -1,0 +1,134 @@
+
+create table responsible(
+    id_responsible varchar(50) primary key,
+    name_responsible varchar(100)
+);
+
+insert into responsible values('RES_1', 'Rivo');
+insert into responsible values('RES_2', 'Tefy');
+insert into responsible values('RES_3', 'Hery');
+
+-- -----------------------------------------------------------------------------------------
+create sequence parcel_seq increment by 1;
+
+create table parcel(
+    id_parcel varchar(50) primary key,
+    name_parcel varchar(100),
+    ares numeric,
+    id_responsible varchar(50),
+    foreign key(id_responsible) references responsible(id_responsible)
+);
+
+insert into parcel values(CONCAT('PAR_', nextval('parcel_seq')), 'Parcel 1', 1000, 'RES_1');
+insert into parcel values(CONCAT('PAR_', nextval('parcel_seq')), 'Parcel 3', 1000, 'RES_2');
+insert into parcel values(CONCAT('PAR_', nextval('parcel_seq')), 'Parcel 4', 1000, 'RES_3');
+
+-- ------------------------------------------------------------------------------------------
+
+create view v_parcel_responsible as(
+    select parcel.*, responsible.name_responsible
+    from parcel 
+    inner join responsible on responsible.id_responsible = parcel.id_responsible
+);
+
+
+-- -----------------------------------------------------------------------------------------
+
+create sequence check_seq increment by 1;
+
+create table check_parcel(
+    id_check_parcel varchar(50) primary key,
+    id_parcel varchar(50),
+    date_check date,
+    feet_amount int,
+    average_corncob int,
+    color int,
+    growth numeric,
+    foreign key(id_parcel) references parcel(id_parcel)
+);
+
+insert into check_parcel values(CONCAT('CH_', nextval('check_seq')), 'PAR_1', '2023-07-01', 10, 0, 0, 0);
+insert into check_parcel values(CONCAT('CH_', nextval('check_seq')), 'PAR_1', '2023-07-15', 9, 4, 20, 5);
+insert into check_parcel values(CONCAT('CH_', nextval('check_seq')), 'PAR_1', '2023-07-30', 9, 6, 40, 5);
+insert into check_parcel values(CONCAT('CH_', nextval('check_seq')), 'PAR_1', '2023-08-15', 9, 5, 35, 10);
+
+insert into check_parcel values(CONCAT('CH_', nextval('check_seq')), 'PAR_2', '2023-08-15', 15, 7, 80, 15);
+
+insert into check_parcel values(CONCAT('CH_', nextval('check_seq')), 'PAR_3', '2023-08-15', 20, 8, 75, 18);
+
+-- -------------------------------------------------------------------------------------------
+
+create table harvest(
+    id_harvest varchar(50) primary key,
+    name_harvest varchar(100),
+    date_harvest date,
+    minimum_growth int
+);
+
+insert into harvest values('HAR_1', '07 - 2023', '2023-07-01', 15);
+
+-- ------------------------------------------------------------------------------------------
+create sequence harvest_data_seq increment by 1;
+
+create table harvest_data(
+    id_harvest_data varchar(50) primary key,
+    id_harvest varchar(50),
+    id_parcel varchar(50),
+    corncob_received int,
+    weight_received numeric,
+    foreign key(id_parcel) references parcel(id_parcel),
+    foreign key(id_harvest) references harvest(id_harvest)
+);
+
+
+insert into harvest_data values (CONCAT('HV_', nextval('harvest_data_seq')), 'HAR_1', 'PAR_1', 40, 5);
+insert into harvest_data values (CONCAT('HV_', nextval('harvest_data_seq')), 'HAR_1', 'PAR_2', 60, 12);
+insert into harvest_data values (CONCAT('HV_', nextval('harvest_data_seq')), 'HAR_1', 'PAR_3', 45, 8);
+
+
+-- ------------------------------------------------------------------------------------------
+
+create table fertilizer(
+    id_fertilizer varchar(50) primary key,
+    name_fertilizer varchar(50)
+);
+
+insert into fertilizer values('NPK_A', 'NPK_A');
+insert into fertilizer values('NPK_B', 'NPK_B');
+insert into fertilizer values('NPK_C', 'NPK_C');
+
+-- ----------------- MYSQL DATABASE -------------------------------
+create table fertilizing(
+    id_fertilizing varchar(50) primary key,
+    date_fertilizing date,
+    id_fertilizer varchar(50),
+    id_parcel varchar(50),
+    qty_fertilizer int
+);
+
+insert into fertilizing values('FER_1', '2023-08-12', 'NPK_A', 'PAR_1', 10);
+insert into fertilizing values('FER_2', '2023-08-14', 'NPK_B', 'PAR_1', 15);
+insert into fertilizing values('FER_3', '2023-08-16', 'NPK_C', 'PAR_1', 8);
+insert into fertilizing values('FER_33', '2023-08-19', 'NPK_B', 'PAR_1', 5);
+insert into fertilizing values('FER_4', '2023-08-10', 'NPK_C', 'PAR_2', 8);
+insert into fertilizing values('FER_5', '2023-08-15', 'NPK_B', 'PAR_2', 5);
+insert into fertilizing values('FER_6', '2023-08-20', 'NPK_C', 'PAR_2', 10);
+insert into fertilizing values('FER_7', '2023-08-20', 'NPK_C', 'PAR_3', 10);
+
+-- ----------------------------------------------------------------
+
+-- --------------- ORACLE DATABASE -----------------------------
+create table expense(
+    id_expense varchar(50) primary key,
+    id_fertilizer varchar(50),
+    date_expense date,
+    fertilizer_pu int,
+    expense_qty int
+);
+
+insert into expense values('EX_1', 'NPK_A', TO_DATE('2023-06-29', 'YYYY-MM-DD'), 2000, 100);
+insert into expense values('EX_2', 'NPK_B', TO_DATE('2023-06-29', 'YYYY-MM-DD'), 1600, 100);
+insert into expense values('EX_3', 'NPK_C', TO_DATE('2023-06-29', 'YYYY-MM-DD'), 1200, 100);
+insert into expense values('EX_4', 'NPK_A', TO_DATE('2023-06-29', 'YYYY-MM-DD'), 1800, 100);
+insert into expense values('EX_5', 'NPK_B', TO_DATE('2023-06-29', 'YYYY-MM-DD'), 1500, 100);
+
